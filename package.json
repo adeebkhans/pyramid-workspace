@@ -1,0 +1,29 @@
+{
+  "name": "pyramid-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pyramid — a task and project management workspace. npm-workspaces monorepo containing a Next.js client and a NestJS API.",
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c magenta,cyan \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "dev:api": "npm run dev -w backend",
+    "dev:web": "npm run dev -w frontend",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "start": "concurrently -n api,web -c magenta,cyan \"npm run start -w backend\" \"npm run start -w frontend\"",
+    "lint": "npm run lint -w backend && npm run lint -w frontend",
+    "typecheck": "npm run typecheck -w backend && npm run typecheck -w frontend",
+    "test": "npm run test -w backend",
+    "seed": "npm run seed -w backend",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.4"
+  }
+}

@@ -1,0 +1,50 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: pyramid-mongo
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: pyramid-api
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      API_PORT: 3001
+      MONGODB_URI: mongodb://mongo:27017/pyramid
+      CORS_ALLOWED_ORIGINS: http://localhost:3000
+      SEED_ON_BOOT: 'true'
+    ports:
+      - '3001:3001'
+
+  web:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: pyramid-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_BASE_URL: http://api:3001
+      AUTH_TRUST_HOST: 'true'
+    ports:
+      - '3000:3000'
+
+volumes:
+  mongo-data:
