@@ -1,0 +1,109 @@
+/* ---------------------------------------------------------------------------
+ * Design tokens
+ *
+ * The single source of truth for colour in the product. Every component reads
+ * these through Tailwind utilities (`bg-surface`, `text-secondary`,
+ * `border-default`) rather than hard-coding hex values, which is what lets the
+ * light/dark switch and the six accent modes be pure CSS — no re-render, no
+ * class churn across the tree.
+ *
+ * Three layers, in order:
+ *   1. @theme  — registers the names with Tailwind so utilities are generated.
+ *   2. :root   — the light palette.
+ *   3. .dark / [data-color-mode] — overrides that swap values underneath.
+ * ------------------------------------------------------------------------ */
+
+@theme {
+  /* Surfaces */
+  --color-page: var(--color-page);
+  --color-surface: var(--color-surface);
+  --color-column-bg: var(--color-column-bg);
+  --color-border-default: var(--color-border-default);
+
+  /* Type */
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
+
+  /* Accent */
+  --color-accent-primary: var(--color-accent-primary);
+  --color-accent-fg: var(--color-accent-fg);
+
+  /* Priority meter */
+  --color-priority-high: #ef4444;
+  --color-priority-medium: #f59e0b;
+  --color-priority-low: #a1a1aa;
+
+  /* Shorthand aliases so components can write `text-primary` / `border-default` */
+  --color-primary: var(--color-text-primary);
+  --color-secondary: var(--color-text-secondary);
+  --color-tertiary: var(--color-text-tertiary);
+  --color-default: var(--color-border-default);
+
+  /* The neutral ramp is declared explicitly: Tailwind v4 tree-shakes unused
+     palette entries, and several of these are only referenced through
+     runtime-composed class strings. */
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #d4d4d4;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #737373;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #404040;
+  --color-neutral-800: #262626;
+  --color-neutral-900: #171717;
+}
+
+/* ── light (default) ─────────────────────────────────────────────────────── */
+:root {
+  --color-page: #f7f7f8;
+  --color-surface: #ffffff;
+  --color-column-bg: #f5f5f7;
+  --color-border-default: #e5e5e7;
+  --color-text-primary: #18181b;
+  --color-text-secondary: #71717a;
+  --color-text-tertiary: #a1a1aa;
+  --color-accent-primary: #7c6ff0;
+  --color-accent-fg: #ffffff;
+}
+
+/* ── dark ────────────────────────────────────────────────────────────────── */
+.dark {
+  --color-page: #09090b;
+  --color-surface: #18181b;
+  --color-column-bg: #1f1f23;
+  --color-border-default: #27272a;
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1aa;
+  --color-text-tertiary: #71717a;
+}
+
+/* ── accent modes ────────────────────────────────────────────────────────────
+ * Set on <html> as data-color-mode; independent of light/dark so the two
+ * preferences compose rather than multiply into twelve themes.
+ * ------------------------------------------------------------------------ */
+[data-color-mode='amber'] {
+  --color-accent-primary: #f59e0b;
+}
+[data-color-mode='blue'] {
+  --color-accent-primary: #7c6ff0;
+}
+[data-color-mode='pink'] {
+  --color-accent-primary: #ec4899;
+}
+[data-color-mode='rose'] {
+  --color-accent-primary: #f43f5e;
+}
+[data-color-mode='emerald'] {
+  --color-accent-primary: #10b981;
+}
+[data-color-mode='black'] {
+  --color-accent-primary: #18181b;
+}
+
+/* Black inverts in dark mode, otherwise the accent disappears into the page. */
+.dark [data-color-mode='black'],
+.dark[data-color-mode='black'] {
+  --color-accent-primary: #fafafa;
+  --color-accent-fg: #18181b;
+}

@@ -1,0 +1,60 @@
+/* ---------------------------------------------------------------------------
+ * Base layer — element defaults and the handful of composed classes that are
+ * genuinely reused. Anything component-specific belongs with its component.
+ * ------------------------------------------------------------------------ */
+
+body {
+  background-color: var(--color-page);
+  color: var(--color-text-primary);
+}
+
+/* Safari renders bare <button> with its own chrome; the app draws its own. */
+button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+@layer components {
+  /* The high-contrast call to action. Deliberately not the accent colour — it
+     stays legible whichever of the six accent modes is selected. */
+  .btn-primary {
+    background-color: #18181b;
+    color: #ffffff;
+  }
+
+  .dark .btn-primary {
+    background-color: #ffffff;
+    color: #18181b;
+  }
+}
+
+/* Panels that scroll but should not show a track (board columns, detail rail). */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Card lifted under the cursor while a board drag is in progress. */
+.is-dragging {
+  opacity: 0.4;
+}
+
+/* Column highlight while a card hovers over it. */
+.is-drop-target {
+  outline: 2px dashed var(--color-border-default);
+  outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
