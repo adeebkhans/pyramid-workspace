@@ -1,15 +1,13 @@
 import type { NextConfig } from 'next';
 
 /**
- * The browser always talks to same-origin `/api/*`. A rewrite forwards those
+ * The browser always talks to same-origin `/api/*`. Edge middleware forwards those
  * calls to the NestJS service, which means:
- *   • no CORS preflight on every request in development;
+ *   • no CORS preflight on every request in development or production;
  *   • the API base URL is a deploy-time concern, not something baked into the
  *     client bundle;
  *   • `/api/auth/*` stays with NextAuth, which owns the session cookie.
  */
-const apiOrigin = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3001';
-
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
