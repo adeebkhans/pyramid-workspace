@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return {
       beforeFiles: [],
-      afterFiles: [{ source: '/api/:path*', destination: `${apiOrigin}/api/:path*` }],
+      afterFiles: [],
       fallback: [],
     };
   },
