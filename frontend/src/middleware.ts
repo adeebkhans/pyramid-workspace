@@ -14,15 +14,6 @@ function hasSession(request: NextRequest): boolean {
 
 export function middleware(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
-
-  // 1. Intercept all data API requests and proxy them to Render (EXCEPT NextAuth routes)
-  if (pathname.startsWith('/api') && !pathname.startsWith('/api/auth')) {
-    const apiOrigin = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3001';
-    const targetUrl = new URL(pathname + request.nextUrl.search, apiOrigin);
-    return NextResponse.rewrite(targetUrl);
-  }
-
-  // 2. Original Authentication Route Gate Core
   const isSignedIn = hasSession(request);
   const isSignInRoute = pathname.startsWith(SIGN_IN_ROUTE);
 
@@ -40,9 +31,6 @@ export function middleware(request: NextRequest): NextResponse {
 }
 
 export const config = {
-  // Configured to catch your workspace pages AND the backend api traffic routes cleanly
-  matcher: [
-    '/api/:path*',
-    '/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.svg$).*)'
-  ],
+  // CRITICAL: Expressly ignore ALL /api paths here so the config fallback can handle them natively
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\.svg$).*)'],
 };

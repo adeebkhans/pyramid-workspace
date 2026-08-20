@@ -1,23 +1,15 @@
 import type { NextConfig } from 'next';
 
-/**
- * The browser always talks to same-origin `/api/*`. Edge middleware forwards those
- * calls to the NestJS service, which means:
- *   • no CORS preflight on every request in development or production;
- *   • the API base URL is a deploy-time concern, not something baked into the
- *     client bundle;
- *   • `/api/auth/*` stays with NextAuth, which owns the session cookie.
- */
+const apiOrigin = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3001';
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
 
   images: {
     remotePatterns: [
-      // Generated member portraits.
-      { protocol: 'https', hostname: 'api.dicebear.com' },
-      // Google account pictures for federated sign-in.
-      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: '://dicebear.com' },
+      { protocol: 'https', hostname: '://googleusercontent.com' },
     ],
   },
 
@@ -25,7 +17,14 @@ const nextConfig: NextConfig = {
     return {
       beforeFiles: [],
       afterFiles: [],
-      fallback: [],
+      // Fallback routes proxy ALL method types (POST, GET, etc.) to Render 
+      // ONLY if they don't match a local Vercel file or route first.
+      fallback: [
+        {
+          source: '/api/:path*',
+          destination: `${apiOrigin}/api/:path*`,
+        },
+      ],
     };
   },
 
